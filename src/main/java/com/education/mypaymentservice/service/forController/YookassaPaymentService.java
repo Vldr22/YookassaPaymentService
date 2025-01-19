@@ -2,8 +2,8 @@ package com.education.mypaymentservice.service.forController;
 
 import com.education.mypaymentservice.config.YookassaFeignClient;
 import com.education.mypaymentservice.exception.UnauthorizedException;
-import com.education.mypaymentservice.model.common.Amount;
-import com.education.mypaymentservice.model.common.Confirmation;
+import com.education.mypaymentservice.model.yookassa.Amount;
+import com.education.mypaymentservice.model.yookassa.Confirmation;
 import com.education.mypaymentservice.model.entity.CardToken;
 import com.education.mypaymentservice.model.entity.Client;
 import com.education.mypaymentservice.model.entity.Transaction;
@@ -61,14 +61,14 @@ public class YookassaPaymentService {
     private YookassaPaymentRequest createYookassaPaymentRequest(CreatePaymentRequest request) {
         return YookassaPaymentRequest.builder()
                 .amount(Amount.builder()
-                        .value(request.getAmount().getValue())
-                        .currency(request.getAmount().getCurrency())
+                        .value(request.amount().getValue())
+                        .currency(request.amount().getCurrency())
                         .build())
                 .confirmation(Confirmation.builder()
                         .type("redirect")
-                        .returnUrl(request.getReturnUrl())
+                        .returnUrl(request.returnUrl())
                         .build())
-                .description(request.getDescription())
+                .description(request.description())
                 .capture(true)
                 .savePaymentMethod(true)
                 .build();
@@ -115,7 +115,7 @@ public class YookassaPaymentService {
         if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
             System.out.println(response.getBody().getConfirmation().confirmationUrl);
             addPaymentToDatabase(response);
-            return response.getBody().getConfirmation().getConfirmationUrl();
+            return response.getBody().getConfirmation().confirmationUrl;
         } else {
             throw new PaymentServiceException("Ошибка при создании платежа: ", "response",
                     Objects.requireNonNull(response.getBody()).toString());

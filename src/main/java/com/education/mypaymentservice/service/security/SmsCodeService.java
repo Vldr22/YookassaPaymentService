@@ -32,14 +32,14 @@ public class SmsCodeService {
             smsCodeRepository.delete(smsCodeRepository.findByPhone(verifyPhone));
         }
 
-        SmsCode smsCode = SmsCode.builder()
-                .phone(verifyPhone)
-                .code(generateSmsCode())
-                .createDate(LocalDateTime.now())
-                .expireTime(LocalDateTime.now().plusMinutes(appSettingSingleton.getAppSetting()
-                        .getMinutesExpireTimeSmsCode()))
-                .status(SmsCodeStatus.CREATED)
-                .build();
+        SmsCode smsCode = new SmsCode();
+
+        smsCode.setPhone(verifyPhone);
+        smsCode.setCode(generateSmsCode());
+        smsCode.setCreateDate(LocalDateTime.now());
+        smsCode.setExpireTime(LocalDateTime.now().plusMinutes(appSettingSingleton.getAppSetting()
+                .getMinutesExpireTimeSmsCode()));
+        smsCode.setStatus(SmsCodeStatus.CREATED);
 
         Optional<SmsCode> smsCodeOptional = Optional.of(smsCodeRepository.save(smsCode));
         return smsCodeOptional.orElseThrow(() -> new PaymentServiceException(
@@ -60,6 +60,7 @@ public class SmsCodeService {
     }
 
     public void updateSmsSendStatus(SmsCode smsCode, SmsCodeStatus status) {
+
         smsCode.setStatus(status);
         smsCode.setUpdateDate(LocalDateTime.now());
         smsCodeRepository.save(smsCode);

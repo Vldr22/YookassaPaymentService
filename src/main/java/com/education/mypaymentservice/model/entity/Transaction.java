@@ -15,10 +15,10 @@ import java.util.Currency;
 import java.util.UUID;
 
 @Entity
-@Table(name = "transactions")
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "transactions")
 public class Transaction {
 
     @Id

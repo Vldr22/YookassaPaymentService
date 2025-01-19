@@ -1,4 +1,4 @@
-package com.education.mypaymentservice.model.common;
+package com.education.mypaymentservice.model.yookassa;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

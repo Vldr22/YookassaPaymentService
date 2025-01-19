@@ -1,38 +1,39 @@
 package com.education.mypaymentservice.controller;
 
+import com.education.mypaymentservice.model.common.CommonResponse;
 import com.education.mypaymentservice.model.response.ClientResponse;
 import com.education.mypaymentservice.model.request.TransactionFilterRequest;
-import com.education.mypaymentservice.model.response.TransactionResponse;
+import com.education.mypaymentservice.model.response.EmployeeTransactionResponse;
 import com.education.mypaymentservice.model.entity.AppSetting;
 import com.education.mypaymentservice.service.forController.EmployeeService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/employee")
+@RequestMapping("/api/employee")
 @RequiredArgsConstructor
 public class EmployeeController {
 
     private final EmployeeService employeeService;
 
-    @GetMapping("/getAllClients")
-    public List<ClientResponse> getAllClients() {
-        return employeeService.getAllClientsResponses();
+    @GetMapping("/clients")
+    public CommonResponse<List<ClientResponse>> getAllClients() {
+        List<ClientResponse> clientResponseList = employeeService.getAllClientsResponses();
+        return CommonResponse.success(clientResponseList);
     }
 
-    @GetMapping("/getSettings")
-    public AppSetting getSettings() {
-        return employeeService.getAppSetting();
+    @GetMapping("/settings")
+    public CommonResponse<AppSetting> getSettings() {
+        AppSetting appSetting = employeeService.getAppSetting();
+        return CommonResponse.success(appSetting);
     }
 
-    @PostMapping("/getFilteredTransactions")
-    public ResponseEntity<List<TransactionResponse>> getFilteredTransactions(
+    @PostMapping("/filteredTransactions")
+    public CommonResponse<List<EmployeeTransactionResponse>> getFilteredTransactions(
             @RequestBody TransactionFilterRequest filterRequest) {
-        List<TransactionResponse> transactionList = employeeService.getFilteredTransactionsResponses(filterRequest);
-        return new ResponseEntity<>(transactionList, HttpStatus.OK);
+        List<EmployeeTransactionResponse> transactionList = employeeService.getFilteredTransactionsResponses(filterRequest);
+        return CommonResponse.success(transactionList);
     }
 }

@@ -23,7 +23,5 @@ public class ClientResponse {
     public ClientResponse(String fullName, String phone) {
         this.fullName = fullName;
         this.phone = phone;
-        this.registrationDate = null;
-        this.blocked = null;
     }
 }

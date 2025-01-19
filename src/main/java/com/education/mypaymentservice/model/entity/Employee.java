@@ -4,23 +4,20 @@ import com.education.mypaymentservice.model.enums.Roles;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "employees")
-@Data
-@AllArgsConstructor
+@Getter @Setter
 @NoArgsConstructor
-@Builder
+@AllArgsConstructor
+@Table(name = "employees")
 public class Employee {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long employeeId;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
     @Column(length = 50, nullable = false)
     private String name;
@@ -41,8 +38,7 @@ public class Employee {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    @Builder.Default
-    private Roles role = Roles.ROLE_EMPLOYEE;
+    private Roles role;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;

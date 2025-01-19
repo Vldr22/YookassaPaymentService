@@ -1,4 +1,4 @@
-package com.education.mypaymentservice.utils;
+package com.education.mypaymentservice.model.entity.filters;
 
 import com.education.mypaymentservice.model.entity.Transaction;
 import org.springframework.data.jpa.domain.Specification;

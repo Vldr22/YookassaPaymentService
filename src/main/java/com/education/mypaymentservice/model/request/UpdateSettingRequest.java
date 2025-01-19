@@ -1,28 +1,16 @@
-package com.education.mypaymentservice.model.entity;
+package com.education.mypaymentservice.model.request;
 
-import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 
-@Entity
-@Getter @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Table(name = "app_settings")
-public class AppSetting {
 
-    @Id
-    private Integer id;
-
+@Getter
+public class UpdateSettingRequest {
     private BigDecimal feePercent;
-
     private long SecondsJwtTokenExpirationClient;
-
     private long SecondsJwtTokenExpirationEmployee;
-
     private long SecondsJwtTokenExpirationAdmin;
-
     private long MinutesExpireTimeSmsCode;
-
 }

@@ -8,14 +8,14 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "clients")
-@AllArgsConstructor
+@Getter @Setter
 @NoArgsConstructor
-@Data
+@AllArgsConstructor
+@Table(name = "clients")
 public class Client {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     @Column(length = 50, nullable = false)
@@ -36,8 +36,16 @@ public class Client {
     @Column(columnDefinition = "TEXT", nullable = false, unique = true)
     private String phone;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Roles role = Roles.ROLE_CLIENT;
 
+    public Client(String name, String surname, String midname, String phone) {
+        this.name = name;
+        this.surname = surname;
+        this.midname = midname;
+        this.phone = phone;
+    }
 }
 
 

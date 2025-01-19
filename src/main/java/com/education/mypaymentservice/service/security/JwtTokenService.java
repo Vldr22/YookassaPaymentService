@@ -43,48 +43,26 @@ public class JwtTokenService {
         }
     }
 
-    public String generateJWTTokenForClient(String phone) {
+    public String generateToken(String subject, Roles role) {
         Instant now = Instant.now();
-        Instant expiration = now.plus(tokenExpirationForClient, ChronoUnit.SECONDS);
+        Instant expiration = null;
+        String sub = subject;
+
+        switch (role) {
+            case ROLE_CLIENT -> {
+                expiration = now.plus(tokenExpirationForClient, ChronoUnit.SECONDS);
+                sub = normalizeRussianPhoneNumber(subject);
+            }
+            case ROLE_EMPLOYEE -> expiration = now.plus(tokenExpirationForEmployee, ChronoUnit.SECONDS);
+            case ROLE_ADMIN -> expiration = now.plus(tokenExpirationForAdmin, ChronoUnit.SECONDS);
+        }
 
         return Jwts.builder()
                 .header()
                 .type("JWT")
                 .and()
-                .claim("role", Roles.ROLE_CLIENT.toString())
-                .subject(normalizeRussianPhoneNumber(phone))
-                .issuedAt(Date.from(now))
-                .expiration(Date.from(expiration))
-                .signWith(secretKey)
-                .compact();
-    }
-
-    public String generateJWTTokenForEmployee(String email) {
-        Instant now = Instant.now();
-        Instant expiration = now.plus(tokenExpirationForEmployee, ChronoUnit.SECONDS);
-
-        return Jwts.builder()
-                .header()
-                .type("JWT")
-                .and()
-                .claim("role", Roles.ROLE_EMPLOYEE.toString())
-                .subject(email)
-                .issuedAt(Date.from(now))
-                .expiration(Date.from(expiration))
-                .signWith(secretKey)
-                .compact();
-    }
-
-    public String generateJWTTokenForAdmin(String email) {
-        Instant now = Instant.now();
-        Instant expiration = now.plus(tokenExpirationForAdmin, ChronoUnit.SECONDS);
-
-        return Jwts.builder()
-                .header()
-                .type("JWT")
-                .and()
-                .claim("role", Roles.ROLE_ADMIN.toString())
-                .subject(email)
+                .claim("role", role)
+                .subject(sub)
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(expiration))
                 .signWith(secretKey)
@@ -108,5 +86,4 @@ public class JwtTokenService {
                 .getPayload()
                 .get("role", String.class);
     }
-
 }

@@ -34,10 +34,10 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(
                         request -> request
-                                .requestMatchers("/auth/**").permitAll()
-                                .requestMatchers("/employee/**").hasRole("EMPLOYEE")
-                                .requestMatchers("/payments/**").hasRole("CLIENT")
-                                .requestMatchers("/admin/**").hasRole("ADMIN")
+                                .requestMatchers("/api/auth/**").permitAll()
+                                .requestMatchers("/api/employee/**").hasRole("EMPLOYEE")
+                                .requestMatchers("/api/payments/**").hasRole("CLIENT")
+                                .requestMatchers("/api/admin/**").hasRole("ADMIN")
                                 .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
@@ -46,7 +46,7 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(12);
     }
 
     @Bean

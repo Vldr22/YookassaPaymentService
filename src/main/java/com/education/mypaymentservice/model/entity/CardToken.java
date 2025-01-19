@@ -7,17 +7,16 @@ import lombok.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "card_tokens")
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "card_tokens")
 public class CardToken {
 
     @Id
-    @GeneratedValue
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
-    @JsonIgnore
     @Column(columnDefinition = "TEXT", nullable = false, unique = true)
     private String token;
 

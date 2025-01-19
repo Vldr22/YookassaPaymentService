@@ -7,16 +7,15 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "Sms_Codes")
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter @Setter
-@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "Sms_Codes")
 public class SmsCode {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long smsId;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
 
     @Column(nullable = false, length = 4)
     private String code;
@@ -35,5 +34,6 @@ public class SmsCode {
 
     @Column(nullable = false)
     private String phone;
+
 
 }

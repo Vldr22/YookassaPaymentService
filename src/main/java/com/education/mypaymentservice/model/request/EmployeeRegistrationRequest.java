@@ -3,23 +3,22 @@ package com.education.mypaymentservice.model.request;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class EmployeeRegistrationRequest {
 
     @NotNull
+    @Size(min = 2, max = 50)
     private String name;
 
     @NotNull
-    private String surname;
+    @Size(min = 2, max = 50)
+    private String surName;
 
+    @Size(min = 2, max = 50)
     private String midName;
 
     @Email

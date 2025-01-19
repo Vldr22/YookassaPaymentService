@@ -5,7 +5,7 @@ import com.education.mypaymentservice.settings.AppSettingSingleton;
 import com.education.mypaymentservice.model.entity.Transaction;
 import com.education.mypaymentservice.model.enums.TransactionStatus;
 import com.education.mypaymentservice.repository.TransactionRepository;
-import com.education.mypaymentservice.utils.TransactionSpecification;
+import com.education.mypaymentservice.model.entity.filters.TransactionSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
