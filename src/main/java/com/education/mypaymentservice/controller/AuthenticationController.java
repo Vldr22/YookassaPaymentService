@@ -1,54 +1,71 @@
 package com.education.mypaymentservice.controller;
 
-import com.education.mypaymentservice.dto.Client;
-import com.education.mypaymentservice.service.clientService.ClientBlockService;
-import com.education.mypaymentservice.service.clientService.ClientService;
-import com.education.mypaymentservice.service.securityService.JwtTokenService;
-import com.education.mypaymentservice.service.securityService.SmsCodeService;
-import org.springframework.http.ResponseEntity;
+import com.education.mypaymentservice.model.common.CommonResponse;
+import com.education.mypaymentservice.model.request.*;
+import com.education.mypaymentservice.model.response.ClientResponse;
+import com.education.mypaymentservice.model.response.EmployeeResponse;
+import com.education.mypaymentservice.model.response.TokenResponse;
+import com.education.mypaymentservice.service.forController.AuthenticationService;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
+@RequiredArgsConstructor
 public class AuthenticationController {
 
-    private final SmsCodeService smsCodeService;
-    private final JwtTokenService jwtTokenService;
-    private final ClientService clientService;
-    private final ClientBlockService clientBlockService;
+    private final AuthenticationService authenticationService;
 
-    public AuthenticationController(SmsCodeService smsCodeService, JwtTokenService jwtTokenService, ClientService clientService, ClientBlockService clientBlockService) {
-        this.smsCodeService = smsCodeService;
-        this.jwtTokenService = jwtTokenService;
-        this.clientService = clientService;
-        this.clientBlockService = clientBlockService;
+    @PostMapping("/registration-client")
+    public CommonResponse<ClientResponse> registrationClient(@Valid @RequestBody ClientRegistrationRequest request) {
+        ClientResponse registeredClient = authenticationService.registeredClient(request);
+        return CommonResponse.success(registeredClient);
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<String> requestSmsCode(@RequestParam String name,
-                                       @RequestParam String surname,
-                                       @RequestParam String midname,
-                                       @RequestParam (defaultValue = "true") boolean blocked,
-                                       @RequestParam String phone) {
-
-        clientService.addClient(new Client(name,surname,midname, blocked,phone));
-        String smsCode = smsCodeService.generateSmsCode(phone);
-        return ResponseEntity.ok("СМС код: " + smsCode);
+    @PostMapping("/registration-employee")
+    public CommonResponse<EmployeeResponse> registrationEmployee(@Valid @RequestBody EmployeeRegistrationRequest request) {
+        EmployeeResponse registeredEmployee = authenticationService.registeredEmployee(request);
+        return CommonResponse.success(registeredEmployee);
     }
 
-    @PostMapping("/verify-sms")
-    public ResponseEntity<?> verifySmsCode(
-            @RequestParam String phone,
-            @RequestParam String code) {
-        if (smsCodeService.isValidateSmsCode(phone, code)) {
-            String token = jwtTokenService.generateJWTToken(phone);
-
-            smsCodeService.removeSmsCode(phone);
-
-            clientBlockService.unblockUser(phone);
-            return ResponseEntity.ok().body(token);
-        } else {
-            return ResponseEntity.status(401).body("Неверный смс код! Авторизация не выполнена");
-        }
+    @PostMapping("/registration-admin")
+    public CommonResponse<EmployeeResponse> registrationAdmin(@Valid @RequestBody EmployeeRegistrationRequest request) {
+        EmployeeResponse employeeResponse = authenticationService.registeredAdmin(request);
+        return CommonResponse.success(employeeResponse);
     }
+
+    @PostMapping("/generated-sms-code")
+    public CommonResponse<SmsCodeRequest> requestSmsCode(@RequestBody PhoneRequest phone) {
+        String code = authenticationService.sendSmsCode(String.valueOf(phone));
+        SmsCodeRequest codeResponse = new SmsCodeRequest(code);
+        return CommonResponse.success(codeResponse);
+    }
+
+    @PostMapping("/login-client")
+    public CommonResponse<TokenResponse> verifySmsCode(@RequestBody ClientGenerateSmsCodeRequest request,
+                                                       HttpServletResponse httpServletResponse) {
+        TokenResponse tokenResponse = authenticationService.generateAndSendTokenForClient(request);
+        authenticationService.addTokenToCookie(tokenResponse.token(), httpServletResponse);
+        return CommonResponse.success(tokenResponse);
+    }
+
+    @PostMapping("/login-employee")
+    public CommonResponse<TokenResponse> loginEmployee(@RequestBody LoginEmployeeRequest request,
+                                                       HttpServletResponse httpServletResponse) {
+        TokenResponse tokenResponse = authenticationService.generateAndSendTokenForEmployee(request);
+        authenticationService.addTokenToCookie(tokenResponse.token(), httpServletResponse);
+        return CommonResponse.success(tokenResponse);
+    }
+
+    @PostMapping("/login-admin")
+    public CommonResponse<TokenResponse> requestSmsCode(@RequestBody LoginEmployeeRequest request,
+                                                        HttpServletResponse httpServletResponse) {
+        TokenResponse tokenResponse = authenticationService.generateAndSendTokenForAdmin(request);
+        authenticationService.addTokenToCookie(tokenResponse.token(), httpServletResponse);
+        return CommonResponse.success(tokenResponse);
+    }
+
 }
+

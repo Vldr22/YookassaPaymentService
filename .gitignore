@@ -38,3 +38,4 @@ build/
 mvnw.cmd
 mvnw
 .gitattributes
+/logs
