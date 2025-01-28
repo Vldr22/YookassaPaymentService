@@ -19,9 +19,6 @@ import com.education.mypaymentservice.service.security.SmsCodeService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +31,7 @@ import static com.education.mypaymentservice.utils.NormalizeUtils.castToFullName
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class EmployeeService implements UserDetailsService {
+public class EmployeeService {
 
     private final AppSettingSingleton appSettingSingleton;
     private final SmsCodeService smsCodeService;
@@ -109,15 +106,6 @@ public class EmployeeService implements UserDetailsService {
         smsCodeService.removeExpiredAndVerifiedSmsCodes();
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Employee employee = employeeRepository.findByEmail(email);
-
-        if (employee == null) {
-            throw new UsernameNotFoundException("Сотрудник c email: " + email + " не найден");
-        }
-        return (UserDetails) employee;
-    }
 
     public EmployeeResponse getRegisteredEmployeeResponse(EmployeeRegistrationRequest request, Roles role) {
         Employee addedEmployee = addEmployee(request, role);
@@ -177,7 +165,9 @@ public class EmployeeService implements UserDetailsService {
     }
 
     public Employee findEmployeeByEmail(String email) {
-        return employeeRepository.findByEmail(email);
+        Optional<Employee> optionalEmployee = employeeRepository.findByEmail(email);
+        return optionalEmployee.orElseThrow(() -> new PaymentServiceException(
+                "Сотрудник c email " + email + " не зарегистрирован "));
     }
 
     public boolean isFirstAdminSetupComplete() {

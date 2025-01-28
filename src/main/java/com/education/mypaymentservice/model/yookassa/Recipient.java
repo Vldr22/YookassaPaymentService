@@ -2,9 +2,11 @@ package com.education.mypaymentservice.model.yookassa;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 public class Recipient {
     @JsonProperty("account_id")

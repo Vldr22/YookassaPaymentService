@@ -41,6 +41,8 @@ public class AppSettingSingleton {
     public void updateAppSetting(AppSetting newSettings) {
         this.appSetting.setFeePercent(newSettings.getFeePercent());
         this.appSetting.setSecondsJwtTokenExpirationClient(newSettings.getSecondsJwtTokenExpirationClient());
+        this.appSetting.setSecondsJwtTokenExpirationAdmin(newSettings.getSecondsJwtTokenExpirationAdmin());
+        this.appSetting.setSecondsJwtTokenExpirationEmployee(newSettings.getSecondsJwtTokenExpirationEmployee());
         this.appSetting.setMinutesExpireTimeSmsCode(newSettings.getMinutesExpireTimeSmsCode());
 
         appSettingRepository.save(this.appSetting);

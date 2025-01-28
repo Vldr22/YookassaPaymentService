@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
@@ -22,8 +23,7 @@ public class PaymentStatusChecker {
     private final TransactionService transactionService;
     private final YookassaPaymentService yookassaPaymentService;
 
-    //1 минута - 60000
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(timeUnit = TimeUnit.MINUTES, fixedRate = 1)
     public void checkPaymentStatuses() {
         List<Transaction> pendingTransactions = transactionService.findTransactionsByStatus(
                 TransactionStatus.IN_PROGRESS);

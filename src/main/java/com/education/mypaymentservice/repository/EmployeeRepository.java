@@ -4,9 +4,11 @@ import com.education.mypaymentservice.model.entity.Employee;
 import com.education.mypaymentservice.model.enums.Roles;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
-    Employee findByEmail(String email);
+    Optional<Employee> findByEmail(String email);
     int countByRole(Roles role);
 }
 

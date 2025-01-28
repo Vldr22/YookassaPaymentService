@@ -1,13 +1,11 @@
 package com.education.mypaymentservice.model.yookassa;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import com.education.mypaymentservice.model.enums.Currency;
+import lombok.*;
 
 import java.math.BigDecimal;
-import java.util.Currency;
 
-@Data
+@Getter
 @AllArgsConstructor
 @Builder
 public class Amount {

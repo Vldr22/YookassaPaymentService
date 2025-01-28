@@ -106,7 +106,7 @@ public class YookassaPaymentService {
         return clientService.findClientByPhone(phone);
     }
 
-    public String createYookassaPaymentResponse(CreatePaymentRequest request) {
+    public Confirmation createYookassaPaymentResponse(CreatePaymentRequest request) {
        YookassaPaymentRequest paymentRequest = createYookassaPaymentRequest(request);
 
         ResponseEntity<YookassaPaymentResponse> response =
@@ -115,7 +115,7 @@ public class YookassaPaymentService {
         if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
             System.out.println(response.getBody().getConfirmation().confirmationUrl);
             addPaymentToDatabase(response);
-            return response.getBody().getConfirmation().confirmationUrl;
+            return response.getBody().getConfirmation();
         } else {
             throw new PaymentServiceException("Ошибка при создании платежа: ", "response",
                     Objects.requireNonNull(response.getBody()).toString());

@@ -1,8 +1,8 @@
 package com.education.mypaymentservice.model.entity;
 
+import com.education.mypaymentservice.model.enums.Currency;
 import com.education.mypaymentservice.utils.BigDecimalToLongConverter;
 import com.education.mypaymentservice.model.enums.TransactionStatus;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,7 +11,6 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Currency;
 import java.util.UUID;
 
 @Entity
@@ -34,6 +33,7 @@ public class Transaction {
     private BigDecimal amount;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Currency currency;
 
     @Enumerated(EnumType.STRING)
@@ -52,7 +52,6 @@ public class Transaction {
     private Client client;
 
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "card_token_id")
     private CardToken cardToken;
 

@@ -1,12 +1,12 @@
 package com.education.mypaymentservice.model.response;
 
+import com.education.mypaymentservice.model.enums.Currency;
 import com.education.mypaymentservice.model.enums.TransactionStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Currency;
 import java.util.UUID;
 
 @Getter

@@ -31,7 +31,6 @@ public class SmsCodeCleanupTask {
     }
 
     private void scheduleCleanupTask() {
-
             if (cleanupTask != null) {
                 cleanupTask.cancel(false);
             }
