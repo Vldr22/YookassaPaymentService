@@ -4,6 +4,8 @@ import com.education.mypaymentservice.model.entity.Client;
 import com.education.mypaymentservice.repository.ClientRepository;
 import org.springframework.stereotype.Service;
 
+import static com.education.mypaymentservice.utils.NormalizeUtils.normalizeRussianPhoneNumber;
+
 @Service
 public class ClientBlockService {
 
@@ -13,22 +15,24 @@ public class ClientBlockService {
         this.clientRepository = clientRepository;
     }
 
-    public boolean isUserBlocked(String phone) {
-        return clientRepository.findByPhone(phone)
+    public boolean isBlocked(String phone) {
+        return clientRepository.findByPhone(normalizeRussianPhoneNumber(phone))
                 .map(Client::isBlocked)
-                .orElse(true);
+                .orElse(false);
     }
 
-    public void unblockUser(String phone) {
-        clientRepository.findByPhone(phone)
+    public void unblock(String phone) {
+        clientRepository.findByPhone(normalizeRussianPhoneNumber(phone))
                 .ifPresent(client -> {
-                    client.setBlocked(false);
-                    clientRepository.save(client);
+                    if (client.isBlocked()) {
+                        client.setBlocked(false);
+                        clientRepository.save(client);
+                    }
                 });
     }
 
-    public void blockUser(String phone) {
-        clientRepository.findByPhone(phone)
+    public void block(String phone) {
+        clientRepository.findByPhone(normalizeRussianPhoneNumber(phone))
                 .ifPresent(client -> {
                     client.setBlocked(true);
                     clientRepository.save(client);

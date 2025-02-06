@@ -1,6 +1,5 @@
 package com.education.mypaymentservice.service.forController;
 
-import com.education.mypaymentservice.exception.ForbiddenException;
 import com.education.mypaymentservice.exception.PaymentServiceException;
 import com.education.mypaymentservice.exception.UnauthorizedException;
 import com.education.mypaymentservice.model.entity.Client;
@@ -20,11 +19,8 @@ import com.education.mypaymentservice.service.common.ClientService;
 import com.education.mypaymentservice.service.security.JwtTokenService;
 import com.education.mypaymentservice.service.security.RegistrationCodeService;
 import com.education.mypaymentservice.service.security.SmsCodeService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -54,7 +50,7 @@ public class AuthenticationService {
                 request.getPhone()
                 );
 
-        Client clientAdded = clientService.addClient(client);
+        Client clientAdded = clientService.add(client);
 
         String fullClientName = client.getSurname() + " " + client.getName();
         if (client.getMidname() != null) {
@@ -95,18 +91,18 @@ public class AuthenticationService {
     }
 
     public String sendSmsCode(String phone) {
-        SmsCode smsCode = smsCodeService.createSmsCode(phone);
-        return smsCodeService.sendSmsCode(smsCode.getPhone());
+        SmsCode smsCode = smsCodeService.create(phone);
+        return smsCodeService.send(smsCode.getPhone());
     }
 
     public TokenResponse generateAndSendTokenForClient(ClientGenerateSmsCodeRequest request) {
-        if (smsCodeService.isValidateSmsCode(request.phone(), request.code())) {
+        if (smsCodeService.isValidate(request.phone(), request.code())) {
 
             String validPhone = normalizeRussianPhoneNumber(request.phone());
             String token = jwtTokenService.generateToken(validPhone, Roles.ROLE_CLIENT);
 
-            clientBlockService.unblockUser(normalizeRussianPhoneNumber(validPhone));
-            smsCodeService.updateSmsSendStatus(smsCodeService.findSmsCode(validPhone), SmsCodeStatus.VERIFIED);
+            clientBlockService.unblock(normalizeRussianPhoneNumber(validPhone));
+            smsCodeService.updateStatus(smsCodeService.findByPhone(validPhone), SmsCodeStatus.VERIFIED);
 
             return new TokenResponse(token);
         } else {

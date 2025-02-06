@@ -23,7 +23,7 @@ public class PaymentService {
         Client client = yookassaPaymentService.getAuthorizationClient();
 
         String validPhone = normalizeRussianPhoneNumber(client.getPhone());
-        List<Transaction> transactionList = transactionService.findTransactionByPhone(validPhone);
+        List<Transaction> transactionList = transactionService.findByPhone(validPhone);
 
         return transactionList.stream().map(transaction -> {
             return ClientTransactionResponse.builder()

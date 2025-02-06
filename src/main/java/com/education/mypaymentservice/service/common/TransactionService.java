@@ -1,7 +1,6 @@
 package com.education.mypaymentservice.service.common;
 
 import com.education.mypaymentservice.exception.PaymentServiceException;
-import com.education.mypaymentservice.settings.AppSettingSingleton;
 import com.education.mypaymentservice.model.entity.Transaction;
 import com.education.mypaymentservice.model.enums.TransactionStatus;
 import com.education.mypaymentservice.repository.TransactionRepository;
@@ -21,7 +20,7 @@ import java.util.Optional;
 public class TransactionService {
 
     private final TransactionRepository transactionRepository;
-    private final AppSettingSingleton appSettingSingleton;
+    private final AppSettingService appSettingService;
 
     private BigDecimal calculateAndSetFee(BigDecimal feePercent, BigDecimal amount) {
         if (amount == null || feePercent == null) {
@@ -30,7 +29,7 @@ public class TransactionService {
         return amount.multiply(feePercent).setScale(2, RoundingMode.HALF_UP);
     }
 
-    public Transaction addTransaction(Transaction transaction) {
+    public Transaction add(Transaction transaction) {
 
         if (transaction.getCreateDate() == null) {
             transaction.setCreateDate(LocalDateTime.now());
@@ -38,16 +37,19 @@ public class TransactionService {
             transaction.setUpdateDate(LocalDateTime.now());
         }
 
-        BigDecimal feePercent = appSettingSingleton.getAppSetting().getFeePercent();
-        transaction.setFeePercent(feePercent);
-        transaction.setFee(calculateAndSetFee(feePercent, transaction.getAmount()));
+        try {
+            BigDecimal feePercent = appSettingService.getFeePercent();
+            transaction.setFeePercent(feePercent);
+            transaction.setFee(calculateAndSetFee(feePercent, transaction.getAmount()));
 
-        Optional<Transaction> saveTransaction = Optional.of(transactionRepository.save(transaction));
-        return saveTransaction.orElseThrow(() -> new PaymentServiceException("Ошибка при добавлении транзакции: "
-                + transaction));
+            return transactionRepository.save(transaction);
+        } catch (PaymentServiceException e) {
+            throw new PaymentServiceException("Ошибка при добавлении транзакции: "
+                    + transaction);
+        }
     }
 
-    public Transaction updateTransactionStatus(Transaction transaction, TransactionStatus status) {
+    public Transaction updateStatus(Transaction transaction, TransactionStatus status) {
         transaction.setStatus(status);
         transaction.setUpdateDate(LocalDateTime.now());
 
@@ -56,7 +58,7 @@ public class TransactionService {
                 + transaction));
     }
 
-    public List<Transaction> findTransactionByPhone(String phone) {
+    public List<Transaction> findByPhone(String phone) {
        return transactionRepository.findAllByClient_Phone(phone);
     }
 

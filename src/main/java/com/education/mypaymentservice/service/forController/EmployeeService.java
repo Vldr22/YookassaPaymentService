@@ -5,24 +5,20 @@ import com.education.mypaymentservice.model.entity.Employee;
 import com.education.mypaymentservice.model.enums.Roles;
 import com.education.mypaymentservice.model.request.EmployeeRegistrationRequest;
 import com.education.mypaymentservice.model.request.TransactionFilterRequest;
-import com.education.mypaymentservice.model.request.UpdateSettingRequest;
 import com.education.mypaymentservice.model.response.EmployeeResponse;
 import com.education.mypaymentservice.model.response.EmployeeTransactionResponse;
+import com.education.mypaymentservice.repository.AppSettingRepository;
 import com.education.mypaymentservice.repository.EmployeeRepository;
 import com.education.mypaymentservice.service.common.ClientService;
 import com.education.mypaymentservice.service.common.TransactionService;
-import com.education.mypaymentservice.settings.AppSettingSingleton;
 import com.education.mypaymentservice.model.response.ClientResponse;
-import com.education.mypaymentservice.model.entity.AppSetting;
 import com.education.mypaymentservice.model.entity.Transaction;
 import com.education.mypaymentservice.service.security.SmsCodeService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,7 +29,7 @@ import static com.education.mypaymentservice.utils.NormalizeUtils.castToFullName
 @RequiredArgsConstructor
 public class EmployeeService {
 
-    private final AppSettingSingleton appSettingSingleton;
+    private final AppSettingRepository appSettingRepository;
     private final SmsCodeService smsCodeService;
     private final ClientService clientService;
     private final TransactionService transactionService;
@@ -97,11 +93,6 @@ public class EmployeeService {
         }).toList();
     }
 
-
-    public AppSetting getAppSetting(){
-        return appSettingSingleton.getAppSetting();
-    }
-
     public void removeExpiredAndVerifiedSmsCodes() {
         smsCodeService.removeExpiredAndVerifiedSmsCodes();
     }
@@ -114,38 +105,6 @@ public class EmployeeService {
                 addedEmployee.getSurname(),
                 addedEmployee.getMidname()),
                 request.getEmail());
-    }
-
-    @Transactional
-    public void updateAppSetting(UpdateSettingRequest request) {
-        AppSetting appSetting = appSettingSingleton.getAppSetting();
-
-        if (request.getMinutesExpireTimeSmsCode()!=0) {
-            appSetting.setMinutesExpireTimeSmsCode(request.getMinutesExpireTimeSmsCode());
-        }
-
-        if (request.getSecondsJwtTokenExpirationAdmin()!=0) {
-            appSetting.setSecondsJwtTokenExpirationAdmin(request.getSecondsJwtTokenExpirationAdmin());
-        }
-
-        if (request.getSecondsJwtTokenExpirationClient()!=0) {
-            appSetting.setSecondsJwtTokenExpirationClient(request.getSecondsJwtTokenExpirationClient());
-        }
-
-        if (request.getSecondsJwtTokenExpirationEmployee()!=0) {
-            appSetting.setSecondsJwtTokenExpirationEmployee(request.getSecondsJwtTokenExpirationEmployee());
-        }
-
-        if (request.getFeePercent().compareTo(BigDecimal.ZERO)>=0) {
-            appSetting.setFeePercent(request.getFeePercent());
-        }
-
-        try {
-            appSettingSingleton.updateAppSetting(appSetting);
-            log.info("Настройки приложения успешно обновлены");
-        } catch (Exception e) {
-            throw new PaymentServiceException("Настройки приложения не были обновлены!", "settings", request.toString());
-        }
     }
 
     public Employee addEmployee(EmployeeRegistrationRequest request, Roles role) {

@@ -6,6 +6,7 @@ import com.education.mypaymentservice.model.response.ClientTransactionResponse;
 import com.education.mypaymentservice.model.yookassa.Confirmation;
 import com.education.mypaymentservice.service.forController.PaymentService;
 import com.education.mypaymentservice.service.forController.YookassaPaymentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

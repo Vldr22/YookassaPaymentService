@@ -16,9 +16,7 @@ public class CardTokenService {
         this.cardTokenRepository = cardTokenRepository;
     }
 
-    public CardToken addCardToken(CardToken cardToken) {
-        Optional<CardToken> optionalCardToken = Optional.of(cardTokenRepository.save(cardToken));
-        return optionalCardToken.orElseThrow(() -> new PaymentServiceException("Ошибка при добавлении токена!",
-                "client_id", cardToken.getClient().getId().toString()));
+    public CardToken add(CardToken cardToken) {
+        return cardTokenRepository.save(cardToken);
     }
 }

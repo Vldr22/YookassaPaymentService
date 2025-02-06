@@ -3,7 +3,7 @@ package com.education.mypaymentservice.model.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter @Setter
@@ -13,16 +13,31 @@ import java.math.BigDecimal;
 public class AppSetting {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private BigDecimal feePercent;
+    @Column(unique = true, nullable = false)
+    private String module;
 
-    private long SecondsJwtTokenExpirationClient;
+    @Column(nullable = false, unique = true)
+    private String setting;
 
-    private long SecondsJwtTokenExpirationEmployee;
+    @Column(nullable = false)
+    private String value;
 
-    private long SecondsJwtTokenExpirationAdmin;
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
-    private long MinutesExpireTimeSmsCode;
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
 
+    @PrePersist
+    protected void onCreate() {
+        createdAt = updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 }
