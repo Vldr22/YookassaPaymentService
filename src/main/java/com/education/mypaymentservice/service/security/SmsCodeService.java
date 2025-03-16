@@ -1,12 +1,12 @@
 package com.education.mypaymentservice.service.security;
 
 import com.education.mypaymentservice.exception.PaymentServiceException;
-import com.education.mypaymentservice.settings.AppSettingSingleton;
 import com.education.mypaymentservice.model.enums.SmsCodeStatus;
 import com.education.mypaymentservice.model.entity.SmsCode;
 import com.education.mypaymentservice.repository.SmsCodeRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,9 +22,11 @@ import static com.education.mypaymentservice.utils.NormalizeUtils.normalizeRussi
 public class SmsCodeService {
 
     private final SmsCodeRepository smsCodeRepository;
-    private final AppSettingSingleton appSettingSingleton;
 
-    public SmsCode createSmsCode(String phone) {
+    @Value("${sms.code.expiration.minutes}")
+    private long smsCodeExpiration;
+
+    public SmsCode create(String phone) {
 
         String verifyPhone = normalizeRussianPhoneNumber(phone);
 
@@ -35,10 +37,9 @@ public class SmsCodeService {
         SmsCode smsCode = new SmsCode();
 
         smsCode.setPhone(verifyPhone);
-        smsCode.setCode(generateSmsCode());
+        smsCode.setCode(generate());
         smsCode.setCreateDate(LocalDateTime.now());
-        smsCode.setExpireTime(LocalDateTime.now().plusMinutes(appSettingSingleton.getAppSetting()
-                .getMinutesExpireTimeSmsCode()));
+        smsCode.setExpireTime(LocalDateTime.now().plusMinutes(smsCodeExpiration));
         smsCode.setStatus(SmsCodeStatus.CREATED);
 
         Optional<SmsCode> smsCodeOptional = Optional.of(smsCodeRepository.save(smsCode));
@@ -46,51 +47,50 @@ public class SmsCodeService {
                 "Ошибка при создании СМС-КОДа для телефона: " + phone));
     }
 
-    public boolean isSmsCodeExpired(SmsCode smsCode) {
+    public boolean isExpired(SmsCode smsCode) {
         return LocalDateTime.now().isAfter(smsCode.getExpireTime());
     }
 
-    public SmsCode findSmsCode(String phone) {
+    public SmsCode findByPhone(String phone) {
         SmsCode smsCode = smsCodeRepository.findByPhone(normalizeRussianPhoneNumber(phone));
-        if (isSmsCodeExpired(smsCode)) {
-            expireSmsCode(normalizeRussianPhoneNumber(phone));
+        if (isExpired(smsCode)) {
+            expire(normalizeRussianPhoneNumber(phone));
             throw new PaymentServiceException("Срок действия СМС-КОДа для телефона: " + phone + " истёк");
         }
         return smsCode;
     }
 
-    public void updateSmsSendStatus(SmsCode smsCode, SmsCodeStatus status) {
-
+    public void updateStatus(SmsCode smsCode, SmsCodeStatus status) {
         smsCode.setStatus(status);
         smsCode.setUpdateDate(LocalDateTime.now());
         smsCodeRepository.save(smsCode);
     }
 
-    public String sendSmsCode(String phone) {
+    public String send(String phone) {
        SmsCode smsCode = smsCodeRepository.findByPhone(normalizeRussianPhoneNumber(phone));
-       updateSmsSendStatus(smsCode, SmsCodeStatus.SEND);
+       updateStatus(smsCode, SmsCodeStatus.SEND);
        return smsCode.getCode();
     }
 
-    public String generateSmsCode() {
+    public String generate() {
         return String.format("%04d", new Random().nextInt(10000));
     }
 
-    public boolean isValidateSmsCode(String phone, String code) {
-        SmsCode smsCode = findSmsCode(normalizeRussianPhoneNumber(phone));
+    public boolean isValidate(String phone, String code) {
+        SmsCode smsCode = findByPhone(normalizeRussianPhoneNumber(phone));
 
-        if (isSmsCodeExpired(smsCode)) {
+        if (isExpired(smsCode)) {
             throw new PaymentServiceException("Срок действия СМС-кода для телефона: " + phone + " истёк");
         }
 
         boolean isValid = code.equals(smsCode.getCode());
         if (isValid) {
-            updateSmsSendStatus(smsCode, SmsCodeStatus.VERIFIED);
+            updateStatus(smsCode, SmsCodeStatus.VERIFIED);
         }
         return isValid;
     }
 
-    public void expireSmsCode(String phone) {
+    public void expire(String phone) {
         SmsCode smsCode = smsCodeRepository.findByPhone(normalizeRussianPhoneNumber(phone));
 
         smsCode.setStatus(SmsCodeStatus.EXPIRED);

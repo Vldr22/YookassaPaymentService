@@ -43,10 +43,10 @@ public class PaymentStatusChecker {
     private void updatePaymentStatus(Transaction transaction, ResponseEntity<YookassaPaymentResponse> response) {
         if (response.getStatusCode().is2xxSuccessful() &&
                 Objects.requireNonNull(response.getBody()).getStatus().equals("succeeded")) {
-            transactionService.updateTransactionStatus(transaction, TransactionStatus.DONE);
+            transactionService.updateStatus(transaction, TransactionStatus.DONE);
         } else if (response.getStatusCode().is2xxSuccessful() &&
                 Objects.requireNonNull(response.getBody()).getStatus().equals("canceled")) {
-            transactionService.updateTransactionStatus(transaction, TransactionStatus.CANCELED);
+            transactionService.updateStatus(transaction, TransactionStatus.CANCELED);
         }
         //Оставил для наблюдения этот блок. Он вероятно тут не нужен
         else {

@@ -79,10 +79,10 @@ public class YookassaPaymentService {
         Client client = getAuthorizationClient();
 
         if (!client.isBlocked()) {
-            CardToken cardToken = cardTokenService.addCardToken(
+            CardToken cardToken = cardTokenService.add(
                     new CardToken(Objects.requireNonNull(response.getBody()).getId().toString(), client));
 
-            transactionService.addTransaction(new Transaction(
+            transactionService.add(new Transaction(
                     response.getBody().getId(),
                     Objects.requireNonNull(response.getBody()).getAmount().getValue(),
                     response.getBody().getAmount().getCurrency(),
@@ -103,7 +103,7 @@ public class YookassaPaymentService {
                     Objects.requireNonNull(authentication).toString());
         }
         String phone = authentication.getPrincipal().toString();
-        return clientService.findClientByPhone(phone);
+        return clientService.findByPhone(phone);
     }
 
     public Confirmation createYookassaPaymentResponse(CreatePaymentRequest request) {

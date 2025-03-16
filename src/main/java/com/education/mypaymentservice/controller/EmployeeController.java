@@ -4,11 +4,13 @@ import com.education.mypaymentservice.model.common.CommonResponse;
 import com.education.mypaymentservice.model.response.ClientResponse;
 import com.education.mypaymentservice.model.request.TransactionFilterRequest;
 import com.education.mypaymentservice.model.response.EmployeeTransactionResponse;
-import com.education.mypaymentservice.model.entity.AppSetting;
+import com.education.mypaymentservice.model.response.FeePercentResponse;
+import com.education.mypaymentservice.service.common.AppSettingService;
 import com.education.mypaymentservice.service.forController.EmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -17,6 +19,7 @@ import java.util.List;
 public class EmployeeController {
 
     private final EmployeeService employeeService;
+    private final AppSettingService appSettingService;
 
     @GetMapping("/clients")
     public CommonResponse<List<ClientResponse>> getAllClients() {
@@ -24,9 +27,10 @@ public class EmployeeController {
         return CommonResponse.success(clientResponseList);
     }
 
-    @GetMapping("/settings")
-    public CommonResponse<AppSetting> getSettings() {
-        AppSetting appSetting = employeeService.getAppSetting();
+    @GetMapping("/feePercent")
+    public CommonResponse<FeePercentResponse> getSettings() {
+        BigDecimal feePercent = appSettingService.getFeePercent();
+        FeePercentResponse appSetting = new FeePercentResponse(feePercent);
         return CommonResponse.success(appSetting);
     }
 
