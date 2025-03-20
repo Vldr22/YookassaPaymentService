@@ -2,10 +2,9 @@ package com.education.mypaymentservice.service.forController;
 
 import com.education.mypaymentservice.model.entity.Client;
 import com.education.mypaymentservice.model.entity.Transaction;
-import com.education.mypaymentservice.model.enums.Currency;
-import com.education.mypaymentservice.model.enums.TransactionStatus;
 import com.education.mypaymentservice.model.response.ClientTransactionResponse;
 import com.education.mypaymentservice.service.common.TransactionService;
+import com.education.mypaymentservice.service.model.TestModelFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,7 +16,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 import static com.education.mypaymentservice.utils.NormalizeUtils.normalizeRussianPhoneNumber;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -41,26 +39,15 @@ class PaymentServiceTest {
 
     @BeforeEach
     void setUp() {
-        testClient = new Client();
-        testClient.setName("Иван");
-        testClient.setSurname("Иванов");
-        testClient.setMidname("Иванович");
-        testClient.setPhone("+79001234567");
+        testClient = TestModelFactory.createTestClient();
         testClient.setRegistrationDate(LocalDateTime.now());
         testClient.setBlocked(false);
 
         normalizedPhone = normalizeRussianPhoneNumber(testClient.getPhone());
 
-        testTransaction = new Transaction();
-        testTransaction.setId(UUID.fromString("123e4567-e89b-12d3-a456-426614174000"));
+        testTransaction = TestModelFactory.createTestTransaction(BigDecimal.valueOf(100));
         testTransaction.setCreateDate(LocalDateTime.now());
-        testTransaction.setUpdateDate(LocalDateTime.now());
-        testTransaction.setAmount(BigDecimal.valueOf(1000));
-        testTransaction.setCurrency(Currency.RUB);
-        testTransaction.setStatus(TransactionStatus.DONE);
-        testTransaction.setFee(BigDecimal.valueOf(10));
-        testTransaction.setFeePercent(BigDecimal.valueOf(1));
-        testTransaction.setClient(testClient);
+        testTransaction.setUpdateDate(LocalDateTime.now().plusHours(2));
     }
 
     @Test

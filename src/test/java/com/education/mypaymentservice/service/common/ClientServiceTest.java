@@ -2,8 +2,8 @@ package com.education.mypaymentservice.service.common;
 
 import com.education.mypaymentservice.exception.PaymentServiceException;
 import com.education.mypaymentservice.model.entity.Client;
-import com.education.mypaymentservice.model.enums.Roles;
 import com.education.mypaymentservice.repository.ClientRepository;
+import com.education.mypaymentservice.service.model.TestModelFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,7 +11,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,12 +34,7 @@ public class ClientServiceTest {
 
     @BeforeEach
     void setUp() {
-        testClient = new Client();
-        testClient.setName("Test Name");
-        testClient.setSurname("Test Surname");
-        testClient.setMidname("Test Midname");
-        testClient.setPhone("+79001234567");
-
+        testClient = TestModelFactory.createTestClient();
         normalizePhone = normalizeRussianPhoneNumber(testClient.getPhone());
     }
     @Test
@@ -88,8 +82,8 @@ public class ClientServiceTest {
     public void findAllClients_WhenClientsPresent_ShouldReturnAllClients() {
         List<Client> expectedClients = List.of(
                 testClient,
-                createTestClient("+79991234455","Иван", "Иванов"),
-                createTestClient("+78001234567", "Василий", "Васильев"));
+                TestModelFactory.createTestClientWithArguments("+79991234455","Иван", "Иванов"),
+                TestModelFactory.createTestClientWithArguments("+78001234567", "Василий", "Васильев"));
 
         when(clientRepository.findAll()).thenReturn(expectedClients);
 
@@ -99,16 +93,5 @@ public class ClientServiceTest {
         assertEquals(expectedClients.size(), result.size());
         assertEquals(testClient.getPhone(), result.get(0).getPhone());
         verify(clientRepository).findAll();
-    }
-
-    private Client createTestClient(String phone, String name, String surname) {
-        Client client = new Client();
-        client.setPhone(phone);
-        client.setName(name);
-        client.setSurname(surname);
-        client.setRole(Roles.ROLE_CLIENT);
-        client.setBlocked(true);
-        client.setRegistrationDate(LocalDateTime.now());
-        return client;
     }
 }

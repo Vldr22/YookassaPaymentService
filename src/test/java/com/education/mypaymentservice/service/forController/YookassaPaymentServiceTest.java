@@ -16,6 +16,7 @@ import com.education.mypaymentservice.model.yookassa.Confirmation;
 import com.education.mypaymentservice.service.common.CardTokenService;
 import com.education.mypaymentservice.service.common.ClientService;
 import com.education.mypaymentservice.service.common.TransactionService;
+import com.education.mypaymentservice.service.model.TestModelFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -72,13 +73,7 @@ class YookassaPaymentServiceTest {
         ReflectionTestUtils.setField(yookassaPaymentService, "shopId", "test-shop-id");
         ReflectionTestUtils.setField(yookassaPaymentService, "secretKey", "test-secret-key");
 
-        testClient = new Client();
-        testClient.setName("Иван");
-        testClient.setSurname("Иванов");
-        testClient.setMidname("Иванович");
-        testClient.setPhone("+79001234567");
-        testClient.setBlocked(false);
-
+        testClient = TestModelFactory.createTestClient();
         paymentId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
 
         Amount amount = new Amount(BigDecimal.valueOf(1000), Currency.RUB);

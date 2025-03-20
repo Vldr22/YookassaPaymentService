@@ -1,10 +1,8 @@
 package com.education.mypaymentservice.service.common;
 
-import com.education.mypaymentservice.exception.PaymentServiceException;
 import com.education.mypaymentservice.model.entity.CardToken;
-import com.education.mypaymentservice.model.entity.Client;
 import com.education.mypaymentservice.repository.CardTokenRepository;
-import jakarta.persistence.EntityNotFoundException;
+import com.education.mypaymentservice.service.model.TestModelFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,7 +10,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,15 +30,9 @@ public class CardTokenServiceTest {
 
     @BeforeEach
     void setUp() {
-        Client testClient = new Client();
-        testClient.setName("Test Name");
-        testClient.setSurname("Test Surname");
-        testClient.setMidname("Test Midname");
-        testClient.setPhone("+79001234567");
-
         testCardToken = new CardToken();
         testCardToken.setToken(UUID.randomUUID().toString());
-        testCardToken.setClient(testClient);
+        testCardToken.setClient(TestModelFactory.createTestClient());
     }
 
     @Test

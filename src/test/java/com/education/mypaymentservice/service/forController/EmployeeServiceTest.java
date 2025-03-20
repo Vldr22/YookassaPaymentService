@@ -3,9 +3,7 @@ package com.education.mypaymentservice.service.forController;
 import com.education.mypaymentservice.model.entity.Client;
 import com.education.mypaymentservice.model.entity.Employee;
 import com.education.mypaymentservice.model.entity.Transaction;
-import com.education.mypaymentservice.model.enums.Currency;
 import com.education.mypaymentservice.model.enums.Roles;
-import com.education.mypaymentservice.model.enums.TransactionStatus;
 import com.education.mypaymentservice.model.request.EmployeeRegistrationRequest;
 import com.education.mypaymentservice.model.request.TransactionFilterRequest;
 import com.education.mypaymentservice.model.response.ClientResponse;
@@ -14,6 +12,7 @@ import com.education.mypaymentservice.model.response.EmployeeTransactionResponse
 import com.education.mypaymentservice.repository.EmployeeRepository;
 import com.education.mypaymentservice.service.common.ClientService;
 import com.education.mypaymentservice.service.common.TransactionService;
+import com.education.mypaymentservice.service.model.TestModelFactory;
 import com.education.mypaymentservice.service.security.SmsCodeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,24 +58,8 @@ class EmployeeServiceTest {
 
     @BeforeEach
     void setUp() {
-        testClient = new Client();
-        testClient.setName("Иван");
-        testClient.setSurname("Иванов");
-        testClient.setMidname("Иванович");
-        testClient.setPhone("+79001234567");
-        testClient.setRegistrationDate(LocalDateTime.now());
-        testClient.setBlocked(false);
-
-        testTransaction = new Transaction();
-        testTransaction.setId(UUID.fromString("550e8400-e29b-41d4-a716-446655440000"));
-        testTransaction.setCreateDate(LocalDateTime.now());
-        testTransaction.setUpdateDate(LocalDateTime.now());
-        testTransaction.setAmount(BigDecimal.valueOf(1000));
-        testTransaction.setCurrency(Currency.RUB);
-        testTransaction.setStatus(TransactionStatus.DONE);
-        testTransaction.setFee(BigDecimal.valueOf(10));
-        testTransaction.setFeePercent(BigDecimal.valueOf(1));
-        testTransaction.setClient(testClient);
+        testClient = TestModelFactory.createTestClient();
+        testTransaction = TestModelFactory.createTestTransaction(BigDecimal.valueOf(100));
 
         testEmployee = new Employee();
         testEmployee.setName("Петр");
@@ -87,12 +70,10 @@ class EmployeeServiceTest {
         testEmployee.setRole(Roles.ROLE_EMPLOYEE);
 
         registrationRequest = new EmployeeRegistrationRequest();
-        registrationRequest.setName("Петр");
-        registrationRequest.setSurName("Петров");
-        registrationRequest.setMidName("Петрович");
-        registrationRequest.setEmail("petr@mail.com");
-        registrationRequest.setPassword("password123");
-        registrationRequest.setCode("1234");
+        registrationRequest.setName(testEmployee.getName());
+        registrationRequest.setSurName(testEmployee.getSurname());
+        registrationRequest.setMidName(testEmployee.getMidname());
+        registrationRequest.setEmail(testEmployee.getEmail());
     }
 
     @Test
@@ -166,6 +147,7 @@ class EmployeeServiceTest {
         Employee result = employeeService.addEmployee(registrationRequest, Roles.ROLE_EMPLOYEE);
 
         assertEquals(testEmployee, result);
+        assertEquals("hashedPassword", result.getPassword());
         verify(employeeRepository).save(any(Employee.class));
         verify(passwordEncoder).encode(registrationRequest.getPassword());
     }

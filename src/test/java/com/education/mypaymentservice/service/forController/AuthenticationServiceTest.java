@@ -15,6 +15,7 @@ import com.education.mypaymentservice.model.response.EmployeeResponse;
 import com.education.mypaymentservice.model.response.TokenResponse;
 import com.education.mypaymentservice.service.common.ClientBlockService;
 import com.education.mypaymentservice.service.common.ClientService;
+import com.education.mypaymentservice.service.model.TestModelFactory;
 import com.education.mypaymentservice.service.security.JwtTokenService;
 import com.education.mypaymentservice.service.security.RegistrationCodeService;
 import com.education.mypaymentservice.service.security.SmsCodeService;
@@ -67,11 +68,7 @@ public class AuthenticationServiceTest {
 
     @BeforeEach
     void setUp() {
-        testClient = new Client();
-        testClient.setName("Иван");
-        testClient.setSurname("Иванов");
-        testClient.setMidname("Иванович");
-        testClient.setPhone("+79001234567");
+        testClient = TestModelFactory.createTestClient();
 
         employeeRegistrationRequest = new EmployeeRegistrationRequest();
         employeeRegistrationRequest.setEmail("testEmloyee@mail.com");

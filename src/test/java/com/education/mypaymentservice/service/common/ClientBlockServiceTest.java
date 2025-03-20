@@ -2,6 +2,7 @@ package com.education.mypaymentservice.service.common;
 
 import com.education.mypaymentservice.model.entity.Client;
 import com.education.mypaymentservice.repository.ClientRepository;
+import com.education.mypaymentservice.service.model.TestModelFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,17 +29,13 @@ public class ClientBlockServiceTest {
     private ClientBlockService clientBlockService;
 
     private Client testClient;
+
     private String normalizedPhone;
 
     @BeforeEach
     void setUp() {
-        testClient = new Client();
-        testClient.setName("Test Name");
-        testClient.setSurname("Test Surname");
-        testClient.setMidname("Test Midname");
-        testClient.setPhone("+79001234567");
+        testClient = TestModelFactory.createTestClient();
         testClient.setBlocked(true);
-
         normalizedPhone = normalizeRussianPhoneNumber(testClient.getPhone());
     }
 

@@ -1,10 +1,9 @@
 package com.education.mypaymentservice.service.common;
 
-import com.education.mypaymentservice.model.entity.Client;
 import com.education.mypaymentservice.model.entity.Transaction;
-import com.education.mypaymentservice.model.enums.Currency;
 import com.education.mypaymentservice.model.enums.TransactionStatus;
 import com.education.mypaymentservice.repository.TransactionRepository;
+import com.education.mypaymentservice.service.model.TestModelFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,7 +13,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -35,21 +33,10 @@ public class TransactionServiceTest {
 
     private Transaction testTransaction;
     private BigDecimal feePercent;
-    private Client testClient;
 
     @BeforeEach
     void setUp() {
-        testClient = new Client("Владимир", "Путин", "Владимирович", "+79001234567");
-
-        testTransaction = new Transaction(
-                UUID.randomUUID(),
-                new BigDecimal("100.00"),
-                Currency.RUB,
-                TransactionStatus.IN_PROGRESS,
-                testClient,
-                null
-        );
-
+        testTransaction = TestModelFactory.createTestTransaction(BigDecimal.valueOf(100.00));
         feePercent = new BigDecimal("0.02");
     }
 
@@ -93,9 +80,9 @@ public class TransactionServiceTest {
         String phone = testTransaction.getClient().getPhone();
 
         List<Transaction> expectedTransactions = List.of(
-                createTestTransaction(new BigDecimal("10.00")),
-                createTestTransaction(new BigDecimal("20.00")),
-                createTestTransaction(new BigDecimal("30.00"))
+                TestModelFactory.createTestTransaction(new BigDecimal("10.00")),
+                TestModelFactory.createTestTransaction(new BigDecimal("20.00")),
+                TestModelFactory.createTestTransaction(new BigDecimal("30.00"))
         );
 
         when(transactionRepository.findAllByClient_Phone(phone)).thenReturn(expectedTransactions);
@@ -117,16 +104,5 @@ public class TransactionServiceTest {
         assertEquals(expectedTransactions.size(), result.size());
         assertEquals(status, result.get(0).getStatus());
         verify(transactionRepository).findByStatus(status);
-    }
-
-    private Transaction createTestTransaction(BigDecimal amount) {
-        return new Transaction(
-                UUID.randomUUID(),
-                amount,
-                Currency.RUB,
-                TransactionStatus.NEW,
-                testClient,
-                null
-        );
     }
 }
