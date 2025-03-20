@@ -128,7 +128,7 @@
                     </goals>
                     <configuration>
                         <includes>
-                            <include>**/service/**</include>
+                            <include>com/education/mypaymentservice/service/**/*</include>
                         </includes>
                     </configuration>
                 </execution>
