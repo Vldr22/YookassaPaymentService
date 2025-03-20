@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 
 public class TransactionSpecification {
 
+    //Не стал убирать. Оставил себе, мб пригодиться еще. Хотя метод через QueryDsl гораздо удобней
     public static Specification<Transaction> byClientPhone(String phone) {
         return (root, query, criteriaBuilder) ->
                 phone != null ? criteriaBuilder.equal(root.get("client").get("phone"), phone) : null;
