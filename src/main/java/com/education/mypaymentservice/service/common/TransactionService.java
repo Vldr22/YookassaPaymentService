@@ -1,19 +1,21 @@
 package com.education.mypaymentservice.service.common;
 
 import com.education.mypaymentservice.exception.PaymentServiceException;
+import com.education.mypaymentservice.model.entity.QTransaction;
 import com.education.mypaymentservice.model.entity.Transaction;
 import com.education.mypaymentservice.model.enums.TransactionStatus;
 import com.education.mypaymentservice.repository.TransactionRepository;
-import com.education.mypaymentservice.model.entity.filters.TransactionSpecification;
+import com.querydsl.core.BooleanBuilder;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
+import static com.education.mypaymentservice.utils.NormalizeUtils.normalizeRussianPhoneNumber;
 
 @Service
 @RequiredArgsConstructor
@@ -63,12 +65,33 @@ public class TransactionService {
     }
 
     public List<Transaction> getFilteredTransactions(String phone, LocalDateTime startDate, LocalDateTime endDate,
-                                                     BigDecimal minAmount, BigDecimal maxAmount) {
-        Specification<Transaction> specification = Specification.where(TransactionSpecification.byClientPhone(phone))
-                .and(TransactionSpecification.byCreateDateRange(startDate, endDate))
-                .and(TransactionSpecification.byAmountRange(minAmount, maxAmount));
+                                                    BigDecimal minAmount, BigDecimal maxAmount) {
 
-        return transactionRepository.findAll(specification);
+        BooleanBuilder builder = new BooleanBuilder();
+        QTransaction qTransaction = QTransaction.transaction;
+
+        if (phone!=null) {
+            builder.and(qTransaction.client.phone.eq(normalizeRussianPhoneNumber(phone)));
+        }
+
+        if (minAmount != null) {
+            builder.and(qTransaction.amount.goe(minAmount));
+        }
+
+        if (maxAmount != null) {
+            builder.and(qTransaction.amount.loe(maxAmount));
+        }
+
+        if (startDate != null) {
+            builder.and(qTransaction.createDate.goe(startDate));
+        }
+
+        if (endDate != null) {
+            builder.and(qTransaction.createDate.loe(endDate));
+        }
+
+        Sort sort = Sort.by(Sort.Direction.ASC, "createDate");
+        return (List<Transaction>) transactionRepository.findAll(builder, sort);
     }
 
     public List<Transaction> findTransactionsByStatus(TransactionStatus status) {
