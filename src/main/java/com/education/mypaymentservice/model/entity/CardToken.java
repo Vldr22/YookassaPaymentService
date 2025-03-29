@@ -1,10 +1,7 @@
 package com.education.mypaymentservice.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.UUID;
 
 @Entity
 @Getter @Setter
@@ -20,7 +17,7 @@ public class CardToken {
     @Column(columnDefinition = "TEXT", nullable = false, unique = true)
     private String token;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "client_id", nullable = false)
     private Client client;
 

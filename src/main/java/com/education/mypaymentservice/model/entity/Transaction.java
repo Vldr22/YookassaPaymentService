@@ -36,6 +36,9 @@ public class Transaction {
     @Enumerated(EnumType.STRING)
     private Currency currency;
 
+    @Column(nullable = false)
+    private String description;
+
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "TEXT", nullable = false)
     private TransactionStatus status;
@@ -56,12 +59,13 @@ public class Transaction {
     private CardToken cardToken;
 
     public Transaction(UUID id, BigDecimal amount, Currency currency,
-                       TransactionStatus status, Client client, CardToken cardToken) {
+                       TransactionStatus status, Client client, CardToken cardToken, String description) {
         this.id = id;
         this.amount = amount;
         this.currency = currency;
         this.status = status;
         this.client = client;
         this.cardToken = cardToken;
+        this.description = description;
     }
 }
