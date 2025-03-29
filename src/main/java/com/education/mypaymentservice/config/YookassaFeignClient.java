@@ -1,7 +1,7 @@
 package com.education.mypaymentservice.config;
 
-import com.education.mypaymentservice.model.request.YookassaPaymentRequest;
-import com.education.mypaymentservice.model.response.YookassaPaymentResponse;
+import com.education.mypaymentservice.model.yookassa.YookassaPaymentRequest;
+import com.education.mypaymentservice.model.yookassa.YookassaPaymentResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;

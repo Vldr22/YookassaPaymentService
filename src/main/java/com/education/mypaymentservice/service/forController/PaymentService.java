@@ -4,6 +4,7 @@ import com.education.mypaymentservice.model.response.ClientTransactionResponse;
 import com.education.mypaymentservice.model.entity.Client;
 import com.education.mypaymentservice.model.entity.Transaction;
 import com.education.mypaymentservice.service.common.TransactionService;
+import com.education.mypaymentservice.service.yookassa.YookassaDefaultService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,12 +16,12 @@ import static com.education.mypaymentservice.utils.NormalizeUtils.normalizeRussi
 @RequiredArgsConstructor
 public class PaymentService {
 
-    private final YookassaPaymentService yookassaPaymentService;
+    private final YookassaDefaultService yookassaSimplePaymentService;
 
     private final TransactionService transactionService;
 
     public List<ClientTransactionResponse> getAllClientTransactionsResponse() {
-        Client client = yookassaPaymentService.getAuthorizationClient();
+        Client client =  yookassaSimplePaymentService.getAuthorizationClient();
 
         String validPhone = normalizeRussianPhoneNumber(client.getPhone());
         List<Transaction> transactionList = transactionService.findByPhone(validPhone);

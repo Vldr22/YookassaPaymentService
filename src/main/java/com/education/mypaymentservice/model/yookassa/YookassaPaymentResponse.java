@@ -1,8 +1,5 @@
-package com.education.mypaymentservice.model.response;
+package com.education.mypaymentservice.model.yookassa;
 
-import com.education.mypaymentservice.model.yookassa.Amount;
-import com.education.mypaymentservice.model.yookassa.Confirmation;
-import com.education.mypaymentservice.model.yookassa.Recipient;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,6 +19,9 @@ public class YookassaPaymentResponse {
 
     @JsonProperty("created_at")
     private LocalDateTime createdAt;
+
+    @JsonProperty("payment_method")
+    private PaymentMethod paymentMethod;
 
     private Confirmation confirmation;
     private boolean test;
