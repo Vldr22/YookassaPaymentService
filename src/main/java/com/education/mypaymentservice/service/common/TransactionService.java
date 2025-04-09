@@ -1,9 +1,13 @@
 package com.education.mypaymentservice.service.common;
 
 import com.education.mypaymentservice.exception.PaymentServiceException;
+import com.education.mypaymentservice.model.entity.CardToken;
+import com.education.mypaymentservice.model.entity.Client;
 import com.education.mypaymentservice.model.entity.QTransaction;
 import com.education.mypaymentservice.model.entity.Transaction;
 import com.education.mypaymentservice.model.enums.TransactionStatus;
+import com.education.mypaymentservice.model.request.RefundRequest;
+import com.education.mypaymentservice.model.yookassa.Amount;
 import com.education.mypaymentservice.repository.TransactionRepository;
 import com.querydsl.core.BooleanBuilder;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +18,7 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.education.mypaymentservice.utils.NormalizeUtils.normalizeRussianPhoneNumber;
 
@@ -56,7 +61,15 @@ public class TransactionService {
         transaction.setUpdateDate(LocalDateTime.now());
 
         Optional<Transaction> saveTransaction = Optional.of(transactionRepository.save(transaction));
-        return saveTransaction.orElseThrow(() -> new PaymentServiceException("Ошибка при обновлении транзакции: "
+        return saveTransaction.orElseThrow(() -> new PaymentServiceException("Ошибка при обновлении статуса транзакции: "
+                + transaction));
+    }
+
+    public Transaction updateToken(Transaction transaction, CardToken cardToken) {
+        transaction.setCardToken(cardToken);
+
+        Optional<Transaction> saveTransaction = Optional.of(transactionRepository.save(transaction));
+        return saveTransaction.orElseThrow(() -> new PaymentServiceException("Ошибка при обновлении токена транзакции: "
                 + transaction));
     }
 
@@ -96,5 +109,23 @@ public class TransactionService {
 
     public List<Transaction> findTransactionsByStatus(TransactionStatus status) {
         return transactionRepository.findByStatus(status);
+    }
+
+    public List<Transaction> getTransactionsByDescriptionAndStatus (String description, TransactionStatus transactionStatus) {
+        return transactionRepository.findTransactionsByDescriptionAndStatus(description, transactionStatus);
+    }
+
+    public Transaction findTransactionById(UUID id) {
+        Optional<Transaction> transaction = transactionRepository.findById(id);
+        return transaction.orElseThrow(() -> new PaymentServiceException("Транзакция с id: " + id+ " не найдена"));
+    }
+
+    public Transaction getTransactionByClientIdAmountDescription(UUID clientId, RefundRequest refundRequest) {
+        Optional<Transaction> transactionOptional =
+                transactionRepository.findTransactionByClientAndAmountAndCurrencyAndDescription
+                        (clientId, refundRequest.getAmount().getValue(),
+                        refundRequest.getAmount().getCurrency(), refundRequest.getDescription());
+        return transactionOptional.orElseThrow(() -> new PaymentServiceException(
+                "Транзакция с clientId: " + clientId+ " не найдена"));
     }
 }

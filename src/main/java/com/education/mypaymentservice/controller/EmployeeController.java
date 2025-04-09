@@ -1,12 +1,15 @@
 package com.education.mypaymentservice.controller;
 
 import com.education.mypaymentservice.model.common.CommonResponse;
+import com.education.mypaymentservice.model.request.RefundRequest;
 import com.education.mypaymentservice.model.response.ClientResponse;
 import com.education.mypaymentservice.model.request.TransactionFilterRequest;
 import com.education.mypaymentservice.model.response.EmployeeTransactionResponse;
 import com.education.mypaymentservice.model.response.FeePercentResponse;
+import com.education.mypaymentservice.model.response.RefundResponse;
 import com.education.mypaymentservice.service.common.AppSettingService;
 import com.education.mypaymentservice.service.forController.EmployeeService;
+import com.education.mypaymentservice.service.yookassa.YookassaRefundService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +23,7 @@ public class EmployeeController {
 
     private final EmployeeService employeeService;
     private final AppSettingService appSettingService;
+    private final YookassaRefundService yookassaRefundService;
 
     @GetMapping("/clients")
     public CommonResponse<List<ClientResponse>> getAllClients() {
@@ -39,5 +43,12 @@ public class EmployeeController {
             @RequestBody TransactionFilterRequest filterRequest) {
         List<EmployeeTransactionResponse> transactionList = employeeService.getFilteredTransactionsResponses(filterRequest);
         return CommonResponse.success(transactionList);
+    }
+
+    @PostMapping("/refund")
+    public CommonResponse<RefundResponse> getFilteredTransactions(
+            @RequestBody RefundRequest refundRequest) {
+        RefundResponse response = yookassaRefundService.paymentResponse(refundRequest);
+        return CommonResponse.success(response);
     }
 }

@@ -6,6 +6,7 @@ import com.education.mypaymentservice.repository.CardTokenRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class CardTokenService {
@@ -18,5 +19,15 @@ public class CardTokenService {
 
     public CardToken add(CardToken cardToken) {
         return cardTokenRepository.save(cardToken);
+    }
+
+    public String findValueTokenByClientId(UUID client_id) {
+        Optional<CardToken> cardToken = cardTokenRepository.findByClientId(client_id);
+        return cardToken.map(CardToken::getToken).orElse(null);
+    }
+
+    public CardToken findTokenByClientId(UUID client_id) {
+        Optional<CardToken> cardToken = cardTokenRepository.findByClientId(client_id);
+        return cardToken.orElseThrow(()-> new PaymentServiceException("Токен не найден с id клиента: " + client_id));
     }
 }
