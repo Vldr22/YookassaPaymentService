@@ -25,7 +25,7 @@ public class PaymentController {
     private final YookassaSubscriptionService yookassaSubscriptionService;
 
     @PostMapping()
-    public CommonResponse<Confirmation> createPayment(@RequestBody CreatePaymentRequest request) {
+    public CommonResponse<Confirmation> createPayment(@Valid @RequestBody CreatePaymentRequest request) {
         Confirmation confirmationUrl = yookassaSimplePaymentService.paymentResponse(request);
         return CommonResponse.success(confirmationUrl);
     }
@@ -37,8 +37,10 @@ public class PaymentController {
     }
 
     @PostMapping("/subscribe")
-    public CommonResponse<SubscriptionResponse> subscribe(@RequestBody @Valid SubscriptionRequest request) {
+    public CommonResponse<SubscriptionResponse> subscribe(@Valid @RequestBody SubscriptionRequest request) {
         SubscriptionResponse response = yookassaSubscriptionService.paymentResponse(request);
         return CommonResponse.success(response);
     }
+
+
 }

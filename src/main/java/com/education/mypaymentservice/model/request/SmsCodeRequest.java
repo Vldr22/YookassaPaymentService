@@ -1,4 +1,6 @@
 package com.education.mypaymentservice.model.request;
 
-public record SmsCodeRequest(String code) {
+import jakarta.validation.constraints.NotNull;
+
+public record SmsCodeRequest(@NotNull String code) {
 }

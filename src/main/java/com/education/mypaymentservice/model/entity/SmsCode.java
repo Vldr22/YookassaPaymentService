@@ -20,7 +20,7 @@ public class SmsCode {
     @Column(nullable = false, length = 4)
     private String code;
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createDate;
 
     @Column

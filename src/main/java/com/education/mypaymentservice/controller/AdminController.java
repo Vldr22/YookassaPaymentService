@@ -10,7 +10,6 @@ import com.education.mypaymentservice.service.forController.EmployeeService;
 import com.education.mypaymentservice.service.security.RegistrationCodeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,8 +24,8 @@ public class AdminController {
     private final AppSettingService appSettingService;
 
     @PostMapping("/generate-employee-registration-code")
-    public CommonResponse<RegistrationCodeResponse> generateEmployeeRegistrationCode(@RequestBody EmailRequest request) {
-        RegistrationCodeResponse codeResponse = registrationCodeService.generateCode(request.getEmail());
+    public CommonResponse<RegistrationCodeResponse> generateEmployeeRegistrationCode(@Valid @RequestBody EmailRequest request) {
+        RegistrationCodeResponse codeResponse = registrationCodeService.generateCode(request.email());
         return CommonResponse.success(codeResponse);
     }
 

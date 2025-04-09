@@ -2,12 +2,10 @@ package com.education.mypaymentservice.service.common;
 
 import com.education.mypaymentservice.exception.PaymentServiceException;
 import com.education.mypaymentservice.model.entity.CardToken;
-import com.education.mypaymentservice.model.entity.Client;
 import com.education.mypaymentservice.model.entity.QTransaction;
 import com.education.mypaymentservice.model.entity.Transaction;
 import com.education.mypaymentservice.model.enums.TransactionStatus;
 import com.education.mypaymentservice.model.request.RefundRequest;
-import com.education.mypaymentservice.model.yookassa.Amount;
 import com.education.mypaymentservice.repository.TransactionRepository;
 import com.querydsl.core.BooleanBuilder;
 import lombok.RequiredArgsConstructor;
