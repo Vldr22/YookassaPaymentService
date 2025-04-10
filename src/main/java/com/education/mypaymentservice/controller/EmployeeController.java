@@ -10,6 +10,7 @@ import com.education.mypaymentservice.model.response.RefundResponse;
 import com.education.mypaymentservice.service.common.AppSettingService;
 import com.education.mypaymentservice.service.forController.EmployeeService;
 import com.education.mypaymentservice.service.yookassa.YookassaRefundService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,14 +41,14 @@ public class EmployeeController {
 
     @PostMapping("/filteredTransactions")
     public CommonResponse<List<EmployeeTransactionResponse>> getFilteredTransactions(
-            @RequestBody TransactionFilterRequest filterRequest) {
+            @RequestBody @Valid TransactionFilterRequest filterRequest) {
         List<EmployeeTransactionResponse> transactionList = employeeService.getFilteredTransactionsResponses(filterRequest);
         return CommonResponse.success(transactionList);
     }
 
     @PostMapping("/refund")
     public CommonResponse<RefundResponse> getFilteredTransactions(
-            @RequestBody RefundRequest refundRequest) {
+            @RequestBody @Valid RefundRequest refundRequest) {
         RefundResponse response = yookassaRefundService.paymentResponse(refundRequest);
         return CommonResponse.success(response);
     }

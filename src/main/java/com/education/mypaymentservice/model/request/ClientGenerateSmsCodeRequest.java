@@ -1,3 +1,6 @@
 package com.education.mypaymentservice.model.request;
 
-public record ClientGenerateSmsCodeRequest(String phone, String code) {}
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
+public record ClientGenerateSmsCodeRequest(@NotNull String phone, @Size(min = 4, max = 4) String code) {}

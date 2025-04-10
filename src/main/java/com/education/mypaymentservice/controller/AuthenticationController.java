@@ -37,14 +37,14 @@ public class AuthenticationController {
     }
 
     @PostMapping("/generated-sms-code")
-    public CommonResponse<SmsCodeRequest> requestSmsCode(@RequestBody PhoneRequest phone) {
+    public CommonResponse<SmsCodeRequest> requestSmsCode(@Valid @RequestBody PhoneRequest phone) {
         String code = authenticationService.sendSmsCode(String.valueOf(phone));
         SmsCodeRequest codeResponse = new SmsCodeRequest(code);
         return CommonResponse.success(codeResponse);
     }
 
     @PostMapping("/login-client")
-    public CommonResponse<TokenResponse> verifySmsCode(@RequestBody ClientGenerateSmsCodeRequest request,
+    public CommonResponse<TokenResponse> verifySmsCode(@Valid @RequestBody ClientGenerateSmsCodeRequest request,
                                                        HttpServletResponse httpServletResponse) {
         TokenResponse tokenResponse = authenticationService.generateAndSendTokenForClient(request);
         authenticationService.addTokenToCookie(tokenResponse.token(), httpServletResponse);
@@ -52,7 +52,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login-employee")
-    public CommonResponse<TokenResponse> loginEmployee(@RequestBody LoginEmployeeRequest request,
+    public CommonResponse<TokenResponse> loginEmployee(@Valid @RequestBody LoginEmployeeRequest request,
                                                        HttpServletResponse httpServletResponse) {
         TokenResponse tokenResponse = authenticationService.generateAndSendTokenForEmployee(request);
         authenticationService.addTokenToCookie(tokenResponse.token(), httpServletResponse);
@@ -60,7 +60,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login-admin")
-    public CommonResponse<TokenResponse> requestSmsCode(@RequestBody LoginEmployeeRequest request,
+    public CommonResponse<TokenResponse> requestSmsCode(@Valid @RequestBody LoginEmployeeRequest request,
                                                         HttpServletResponse httpServletResponse) {
         TokenResponse tokenResponse = authenticationService.generateAndSendTokenForAdmin(request);
         authenticationService.addTokenToCookie(tokenResponse.token(), httpServletResponse);
